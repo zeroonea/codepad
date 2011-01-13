@@ -13,12 +13,11 @@
 var CodePad = {
 
     opts : {
+        tabs: null,
+        files: null,
         toolbars: ['save,wrap,maximize'],
-
         load_files_callback: null,
-
         load_file_callback: null,
-        open_file_callback: null,
         save_file_callback: null,
         create_file_callback: null,
         delete_file_callback: null
@@ -31,7 +30,7 @@ var CodePad = {
         save: {
             title: 'Save current file',
             click: function(){
-                CodePad.SaveFile();
+                CodePad.SaveCurrentFile();
             }
         },
         wrap: {
@@ -72,6 +71,7 @@ var CodePad = {
         }
 
         this.MakeToolbars();
+        this.MakeFileTree();
 
         /** Resize Event */
         setInterval(function(){
@@ -127,13 +127,26 @@ var CodePad = {
 
     TreeHtml : function(files, foldername){
         var html = '';
-        for(var filename in files){
-            var child_html = this.TreeHtml(files[filename], foldername + '/' + filename);
+        for(var i in files){
+            var file = files[i], child_html = '', filename = '';
+            if(typeof file == 'object' && file.files != null){
+                /** Folder */
+                filename = file.name
+                child_html = this.TreeHtml(file.files, foldername + '/' + filename);
+            }else if(typeof file == 'object'){
+                /** File with extra settings */
+                filename = file.name;
+            }else{
+                /** File */
+                filename = file;
+            }
+
             var ext = child_html != '' ? 'folder' : this.GetFileExtension(filename);
             var type = child_html != '' ? 'folder' : 'file';
-            
+
             html += '<li rel="'+ext+'" data-'+ type +'="'+foldername + '/' + filename+'"><a href="javascript:void(0);">' + filename + '</a>' + child_html + '</li>';
         }
+
         if(html != ''){
             return '<ul>' + html + '</ul>';
         }else return '';
@@ -188,31 +201,25 @@ var CodePad = {
     },
 
     OpenFile : function(file, content){
-        if(this.opts.open_file_callback){
-            var tabid = 'file-tabs-' + (this.tabcount++);
-            var ext = this.GetFileExtension(file);
-            
-            var tab = $('<div id="'+tabid+'"></div>');
-            $('#codepad-holders').append(tab);
-            $('#file-tabs').tabs('add', '#' + tabid, '<span class="ico16 '+ext+'"></span>&nbsp;' + this.GetFileName(file));
-            $('#codepad-holders').append(tab);
-            $('#file-tabs > ul').css('display', '');
+        var tabid = 'file-tabs-' + (this.tabcount++);
+        var ext = this.GetFileExtension(file);
 
-            if(typeof this.opts.open_file_callback == 'string'){
-                this.ctab = window.parent[this.opts.open_file_callback](file, content, '#' + tabid);
-            }else if(typeof this.opts.open_file_callback == 'function'){
-                this.ctab = this.opts.open_file_callback(file, content, '#' + tabid);
-            }
-            
-            this.ctab.tabid = '#' + tabid;
-            this.tabs[file] = this.ctab;
+        var tab = $('<div id="'+tabid+'"></div>');
+        $('#codepad-holders').append(tab);
+        $('#file-tabs').tabs('add', '#' + tabid, '<span class="ico16 '+ext+'"></span>&nbsp;' + this.GetFileName(file));
+        $('#codepad-holders').append(tab);
+        $('#file-tabs > ul').css('display', '');
 
-            $(tab).data('codepadtab', this.ctab);
-            $('#file-tabs').tabs('select', '#' + tabid)
-                .find('.ui-tabs-nav').sortable('destroy').sortable({
-                    axis: "x"
-                });
-        }
+        this.ctab = new this.opts.tabs.codemirror.obj(this.opts.tabs.codemirror.opts);
+        this.ctab.Open(file, content, '#' + tabid);
+        this.ctab.tabid = '#' + tabid;
+        this.tabs[file] = this.ctab;
+
+        $(tab).data('codepadtab', this.ctab);
+        $('#file-tabs').tabs('select', '#' + tabid)
+            .find('.ui-tabs-nav').sortable('destroy').sortable({
+                axis: "x"
+            });
 
         $('#spinner').css('display', 'none');
     },
@@ -224,7 +231,11 @@ var CodePad = {
         }
     },
 
-    SaveFile : function(){
+    CloseFile : function(file){
+
+    },
+
+    SaveCurrentFile : function(){
         if(this.ctab != null && this.opts.save_file_callback != null){
             var text = this.ctab.Value();
             

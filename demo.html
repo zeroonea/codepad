@@ -3,27 +3,54 @@
 <title>CodePad</title>
 <script type="text/javascript" src="js/jquery/jquery.min.js"></script>
 <script type="text/javascript">
-var files = '{"manifest.json":"","membership.php":"","input.php":"","output.php":"","js":{"detect_timezone.js":"","shit.php":"","cam-on-tinh-yeu.php":"","jquery":{"jquery.min.14-2.js":"","jquery.ui.min.14-2.js":"","themes.xml":"","themes":{"default":{"style.css":"","manifest.xml":""},"navi-sin":{"style.css":"","index.html":"","templates":{"tab-ui-skin-themes.html":"","datepicker.html":""}}}}}}';
+var files = [
+    "manifest.json",
+    "membership.php",
+    "input.php",
+    "output.php",
+    {
+        "name": "readme.html",
+        "path": "README.markdown"
+    },
+    {
+        "name":"js",
+        "files":[
+            "detect_timezone.js",
+            "shit.html",
+            "cam-on-tinh-yeu.php"
+        ]
+    }
+];
 
 function start_codepad(iframe){
-    iframe.contentWindow.CodePad.Init({
-        files: files,
-        open_file_callback: function (file, content, holder){
-            var tab = new iframe.contentWindow.CodePadTab_CodeMirror();
-            tab.Open(file, content, holder);
-            return tab;
+    var cp = iframe.contentWindow;
+
+    cp.CodePad.Init({
+        tabs:{
+            bespin: {
+                obj: cp.CodePadTab_Bespin
+            },
+            codemirror: {
+                obj: cp.CodePadTab_CodeMirror,
+                opts: {
+                    base_path: 'js/codemirror/'
+                }
+            }
         },
+        files: files,
         load_file_callback: 'load_file',
         save_file_callback: 'save_file'
-    }).MakeFileTree();
+    });
 }
 
 function load_file(file, codepad_obj){
-    codepad_obj.OpenFile(file, '<b>shit</b>');
+    $.get('codepad/codepad.js', function(data){
+        codepad_obj.OpenFile(file, data);
+    });
 }
 
 function save_file(file, content, codepad_obj){
-    
+    alert(content);
 }
 </script>
 </head>
