@@ -1,19 +1,34 @@
 <html>
 <head>
 <title>CodePad</title>
-</head>
 <script type="text/javascript">
-function load_file(file){
+var files = '{"manifest.json":"","membership.php":"","input.php":"","output.php":"","js":{"detect_timezone.js":"","shit.php":"","cam-on-tinh-yeu.php":"","jquery":{"jquery.min.14-2.js":"","jquery.ui.min.14-2.js":"","themes.xml":"","themes":{"default":{"style.css":"","manifest.xml":""},"navi-sin":{"style.css":"","index.html":"","templates":{"tab-ui-skin-themes.html":"","datepicker.html":""}}}}}}';
 
+function start_codepad(iframe){
+    iframe.contentWindow.CodePad.Init({
+        files: files,
+        open_file_callback: function (file, content, holder){
+            var tab = new iframe.contentWindow.CodePadTab_CodeMirror();
+            tab.Open(file, content, holder);
+            return tab;
+        },
+        load_file_callback: 'load_file',
+        save_file_callback: 'save_file'
+    }).MakeFileTree();
 }
 
-function save_file(file, content){
+function load_file(file, codepad_obj){
+    codepad_obj.OpenFile(file, '<b>shit</b>');
+}
 
+function save_file(file, content, codepad_obj){
+    
 }
 </script>
+</head>
 <body>
 <h1>CodePad Demo</h1>
 
-<iframe src="codepad/codepad.html" frameborder="no" style="width:100%; height:400px"></iframe>
+<iframe onload="start_codepad(this);" src="codepad/codepad.html" frameborder="no" style="width:100%; height:400px"></iframe>
 </body>
 </html>

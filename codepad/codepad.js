@@ -1,8 +1,7 @@
-var CodePad = function(opts){
-    var context = this;
-    this.opts = {
+var CodePad = {
+
+    opts : {
         toolbars: ['save,wrap,maximize'],
-        files_json: null,
 
         load_files_callback: null,
 
@@ -11,38 +10,110 @@ var CodePad = function(opts){
         save_file_callback: null,
         create_file_callback: null,
         delete_file_callback: null
-    };
-    $.extend(true, this.opts, opts);
+    },
 
-    this.buttons = {
+    buttons : {
         new_file: {
             title:'Create new file'
         },
         save: {
             title: 'Save current file',
             click: function(){
-                context.SaveFile();
+                CodePad.SaveFile();
             }
         },
         wrap: {
             title: 'Toggle word wrapping mode',
             click: function(){
-                if(context.ctab != null) context.ctab.ToggleWordWrapping();
+                if(CodePad.ctab != null) CodePad.ctab.ToggleWordWrapping();
             }
         },
         maximize: {
             title: 'Toggle fullscreen mode',
             click: function(){
-                context.MM();
+                CodePad.MM();
             }
         }
-    };
+    },
 
-    this.ctab = null;
-    this.tabs = [];
-    this.tabcount = 0;
+    iframe : null,
+    ctab : null,
+    tabs : [],
+    tabcount : 0,
 
-    this.TreeHtml = function(files, foldername){
+    Init : function(opts){
+        $.extend(true, this.opts, opts);
+
+        /** Find iframe (in parent) */
+        var iframes = window.parent.document.getElementsByTagName('iframe');
+        for(var i=iframes.length; i-->0;){
+            var _iframe = iframes[i];
+            try{
+                var idoc= 'contentDocument' in _iframe? _iframe.contentDocument : _iframe.contentWindow.document;
+            }catch(e){
+                continue;
+            }
+            if(idoc===document){
+                this.iframe = _iframe;
+                break;
+            }
+        }
+
+        this.MakeToolbars();
+
+        /** Resize Event */
+        setInterval(function(){
+            if(CodePad.ctab != null && CodePad.ctab.wrap.is(':visible')){
+                var d = CodePad.ctab.wrap.width() + '-' + CodePad.ctab.wrap.height();
+                if(CodePad.ctab.wrap.dimension != d){
+                    CodePad.ctab.Refresh();
+                    CodePad.ctab.wrap.dimension = d;
+                }
+            }
+        }, 250);
+
+        /** File Tabs */
+        $('#file-tabs').tabs({
+            //tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'>Close</span></li>",
+            show: function(event, ui){
+                if($(ui.panel).data('codepadtab') != null){
+                    CodePad.ctab = $(ui.panel).data('codepadtab');
+                    CodePad.ctab.Refresh();
+                }
+            }
+        });
+
+        /** Layout */
+        $('#layout').layout({
+            closable: false,
+            resizable: false,
+            slidable: false,
+
+            north__spacing_open: 1,
+            north__size: 30,
+
+            south__spacing_open: 1,
+            south__size: 25,
+
+            west__slidable: true,
+            west__resizable: true,
+            west__closable: true,
+            west__minSize: 200
+        });
+
+        $('#test').layout({
+            closable: false,
+            resizable: false,
+            slidable: false,
+
+            north__size: 25,
+            north__spacing_open: 0
+        });
+
+        return this;
+    },
+
+    TreeHtml : function(files, foldername){
         var html = '';
         for(var filename in files){
             var child_html = this.TreeHtml(files[filename], foldername + '/' + filename);
@@ -54,12 +125,15 @@ var CodePad = function(opts){
         if(html != ''){
             return '<ul>' + html + '</ul>';
         }else return '';
-    };
+    },
 
-    this.MakeFileTree = function(){
-        if(this.opts.files_json != null){
-            this.files = eval('(' + this.opts.files_json + ')');
+    MakeFileTree : function(){
+        if(typeof this.opts.files == 'string' && this.opts.files != ''){
+            this.files = eval('(' + this.opts.files + ')');
+        }else if(typeof this.opts.files == 'object'){
+            this.files = this.opts.files;
         }
+        
         $('#file-tree').html(this.TreeHtml(this.files, ''));
         $('#file-tree').jstree({
             core: {
@@ -79,16 +153,16 @@ var CodePad = function(opts){
             });
             if($(li).attr('rel') != 'folder'){
                 $(li).find(' > a').bind('dblclick', function(){
-                    context.LoadFile($(li).data('file'));
+                    CodePad.LoadFile($(li).data('file'));
                 });
             }
         });
-    };
+    },
 
-    this.LoadFile = function(file){
+    LoadFile : function(file){
         if(this.opts.load_file_callback != null){
             if(this.tabs[file] == null){
-                if(typeof this.opts.load_file_callback == 'string' && iframe != null){
+                if(typeof this.opts.load_file_callback == 'string'){
                     $('#spinner').css('display', '');
                     window.parent[this.opts.load_file_callback](file, this);
                 }else if(typeof this.opts.load_file_callback == 'function'){
@@ -99,9 +173,9 @@ var CodePad = function(opts){
                 this.ActiveFile(file);
             }
         }
-    };
+    },
 
-    this.OpenFile = function(file, content){
+    OpenFile : function(file, content){
         if(this.opts.open_file_callback){
             var tabid = 'file-tabs-' + (this.tabcount++);
             var ext = this.GetFileExtension(file);
@@ -112,7 +186,12 @@ var CodePad = function(opts){
             $('#codepad-holders').append(tab);
             $('#file-tabs > ul').css('display', '');
 
-            this.ctab = this.opts.open_file_callback(file, content, '#' + tabid);
+            if(typeof this.opts.open_file_callback == 'string'){
+                this.ctab = window.parent[this.opts.open_file_callback](file, content, '#' + tabid);
+            }else if(typeof this.opts.open_file_callback == 'function'){
+                this.ctab = this.opts.open_file_callback(file, content, '#' + tabid);
+            }
+            
             this.ctab.tabid = '#' + tabid;
             this.tabs[file] = this.ctab;
 
@@ -124,20 +203,20 @@ var CodePad = function(opts){
         }
 
         $('#spinner').css('display', 'none');
-    };
+    },
 
-    this.ActiveFile = function(file){
+    ActiveFile : function(file){
         if(this.tabs[file] != null){
             this.ctab = this.tabs[file];
             $('#file-tabs').tabs('select', this.ctab.tabid);
         }
-    };
+    },
 
-    this.SaveFile = function(){
+    SaveFile : function(){
         if(this.ctab != null && this.opts.save_file_callback != null){
             var text = this.ctab.Value();
             
-            if(typeof this.opts.save_file_callback == 'string' && iframe != null){
+            if(typeof this.opts.save_file_callback == 'string'){
                 $('#spinner').css('display', '');
                 window.parent[this.opts.save_file_callback](this.ctab.file, text, this);
             }else if(typeof this.opts.save_file_callback == 'function'){
@@ -145,21 +224,21 @@ var CodePad = function(opts){
                 this.opts.load_file_callback(this.ctab.file, text, this);
             }
         }
-    };
+    },
 
-    this.SaveAllFiles = function(){
+    SaveAllFiles : function(){
         
-    };
+    },
 
-    this.GetFileExtension = function(file){
+    GetFileExtension : function(file){
         return (/[.]/.exec(file)) ? /[^.]+$/.exec(file) + '' : '';
-    };
+    },
 
-    this.GetFileName = function(filepath){
+    GetFileName : function(filepath){
         return (/[/]/.exec(filepath)) ? /[^/]+$/.exec(filepath) + '' : filepath;
-    };
+    },
 
-    this.MakeToolbars = function(){
+    MakeToolbars : function(){
         if(this.opts.toolbars.length > 0){
             for(var i = 0; i < this.opts.toolbars.length; i++){
                 var tmp = this.opts.toolbars[i].split(',');
@@ -175,106 +254,34 @@ var CodePad = function(opts){
                 $('#toolbars').append(toolbar);
             }
         }
-    }
+    },
 
-    this.MM = function(){
-        if(iframe == null) return;
-        
-        if(iframe.maximize == null){
+    MM : function(){
+        if(this.iframe.maximize == null){
             $(window.parent.document.body).css('overflow', 'hidden');
-            iframe.p_height = $(iframe).css('height');
-            iframe.p_zindex = $(iframe).css('z-index');
-            $(iframe).css({
+            this.iframe.p_height = $(this.iframe).css('height');
+            this.iframe.p_zindex = $(this.iframe).css('z-index');
+            $(this.iframe).css({
                 position: 'fixed', top: 0, left: 0,
                 height: $(window.parent).height(),
                 width: $(window.parent).width(),
                 zIndex: 99999999
             });
-            iframe.maximize = 1;
+            this.iframe.maximize = 1;
         }else{
             $(window.parent.document.body).css('overflow', '');
-            $(iframe).css({
+            $(this.iframe).css({
                 position: '',
-                height: iframe.p_height,
+                height: this.iframe.p_height,
                 width: '100%',
-                zIndex: iframe.p_zindex
+                zIndex: this.iframe.p_zindex
             });
-            iframe.maximize = null;
+            this.iframe.maximize = null;
         }
-    }
+    },
     
-    this.Error = function(msg, errcode){
+    Error : function(msg, errcode){
         alert(msg);
         $('#spinner').css('display', 'none');
-    };
-
-
-    /** Init */
-    /** Find iframe (in parent) */
-    var iframe = null;
-    var iframes = window.parent.document.getElementsByTagName('iframe');
-    for(var i=iframes.length; i-->0;){
-        var _iframe = iframes[i];
-        try{
-            var idoc= 'contentDocument' in _iframe? _iframe.contentDocument : _iframe.contentWindow.document;
-        }catch(e){
-            continue;
-        }
-        if(idoc===document){
-            iframe = _iframe;
-            break;
-        }
     }
-
-    this.MakeToolbars();
-    this.MakeFileTree();
-    
-    /** Resize Event */
-    setInterval(function(){
-        if(context.ctab != null && context.ctab.wrap.is(':visible')){
-            var d = context.ctab.wrap.width() + '-' + context.ctab.wrap.height();
-            if(context.ctab.wrap.dimension != d){
-                context.ctab.Refresh();
-                context.ctab.wrap.dimension = d;
-            }
-        }
-    }, 250);
-
-    /** File Tabs */
-    $('#file-tabs').tabs({
-        //tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'>Close</span></li>",
-        show: function(event, ui){
-            if($(ui.panel).data('codepadtab') != null){
-                context.ctab = $(ui.panel).data('codepadtab');
-                context.ctab.Refresh();
-            }
-        }
-    });
-
-    /** Layout */
-    $('#layout').layout({
-        closable: false,
-        resizable: false,
-        slidable: false,
-
-        north__spacing_open: 1,
-        north__size: 30,
-
-        south__spacing_open: 1,
-        south__size: 25,
-
-        west__slidable: true,
-        west__resizable: true,
-        west__closable: true,
-        west__minSize: 200
-    });
-
-    $('#test').layout({
-        closable: false,
-        resizable: false,
-        slidable: false,
-
-        north__size: 25,
-        north__spacing_open: 0
-    });
 };
