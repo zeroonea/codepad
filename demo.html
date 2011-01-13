@@ -4,22 +4,24 @@
 <script type="text/javascript" src="js/jquery/jquery.min.js"></script>
 <script type="text/javascript">
 var files = [
-    "manifest.json",
-    "membership.php",
-    "input.php",
-    "output.php",
     {
-        "name": "readme.html",
-        "path": "README.markdown"
-    },
-    {
-        "name":"js",
+        "name":"codepad",
         "files":[
-            "detect_timezone.js",
-            "shit.html",
-            "cam-on-tinh-yeu.php"
+            "codepad.css",
+            "codepad.html",
+            "codepad.js",
+            "layout.css",
+            {
+                "name":"tabs",
+                "files":[
+                    "bespin.js",
+                    "codemirror.js"
+                ]
+            }
         ]
-    }
+    },
+    "README.markdown",
+    "demo.html"
 ];
 
 function start_codepad(iframe){
@@ -44,7 +46,7 @@ function start_codepad(iframe){
 }
 
 function load_file(file, codepad_obj){
-    $.get('codepad/codepad.js', function(data){
+    $.get(file, function(data){
         codepad_obj.OpenFile(file, data);
     });
 }

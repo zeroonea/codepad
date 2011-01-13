@@ -128,23 +128,24 @@ var CodePad = {
     TreeHtml : function(files, foldername){
         var html = '';
         for(var i in files){
-            var file = files[i], child_html = '', filename = '';
-            if(typeof file == 'object' && file.files != null){
-                /** Folder */
-                filename = file.name
-                child_html = this.TreeHtml(file.files, foldername + '/' + filename);
-            }else if(typeof file == 'object'){
-                /** File with extra settings */
-                filename = file.name;
+            var file = files[i], child_html = '', name = '', path = '';
+            if(typeof file == 'object'){
+                /** Folder or File with extra settings */
+                name = file.name
             }else{
                 /** File */
-                filename = file;
+                name = file;
+            }
+            path = (foldername != '' ? foldername + '/' : '') + name;
+            
+            if(file.files != null){
+                child_html = this.TreeHtml(file.files, path);
             }
 
-            var ext = child_html != '' ? 'folder' : this.GetFileExtension(filename);
+            var ext = child_html != '' ? 'folder' : this.GetFileExtension(name);
             var type = child_html != '' ? 'folder' : 'file';
 
-            html += '<li rel="'+ext+'" data-'+ type +'="'+foldername + '/' + filename+'"><a href="javascript:void(0);">' + filename + '</a>' + child_html + '</li>';
+            html += '<li rel="'+ext+'" data-'+ type +'="'+path+'"><a href="javascript:void(0);">' + name + '</a>' + child_html + '</li>';
         }
 
         if(html != ''){

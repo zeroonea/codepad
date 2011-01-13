@@ -17,7 +17,7 @@ var CodePadTab_CodeMirror = function(opts){
 
         
         var syntax = (/[.]/.exec(file)) ? /[^.]+$/.exec(file) + '' : '';
-        var parserfile = [], stylesheet = [];
+        var parserfile = 'parsedummy.js', stylesheet = [];
         if(syntax == 'php'){
             parserfile = ['parsexml.js', 'parsecss.js', 'tokenizejavascript.js', 'parsejavascript.js',
                 '../contrib/php/js/tokenizephp.js', '../contrib/php/js/parsephp.js',
@@ -34,6 +34,9 @@ var CodePadTab_CodeMirror = function(opts){
             stylesheet = [this.opts.base_path + 'css/xmlcolors.css',
                 this.opts.base_path + 'css/jscolors.css',
                 this.opts.base_path + 'css/csscolors.css'];
+        }else if(syntax == 'css'){
+            parserfile = 'parsecss.js';
+            stylesheet = this.opts.base_path + 'css/csscolors.css';
         }
 
         context.env = CodeMirror.fromTextArea($(this.textarea).get(0), {
