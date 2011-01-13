@@ -11,4 +11,4 @@ CodePad is using:
 
 Screenshot:
 
-![](http://img827.imageshack.us/img827/3153/codepad01rc1.jpg "")
+![](https://github.com/zeroonea/codepad/raw/master/screenshot.jpg "")
