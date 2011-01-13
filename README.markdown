@@ -8,3 +8,7 @@ CodePad is using:
 - jstree
 - bespinembedded
 - codemirror
+
+Screenshot:
+
+![](http://img827.imageshack.us/img827/3153/codepad01rc1.jpg "")

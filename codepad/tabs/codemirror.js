@@ -1,7 +1,7 @@
 var CodePadTab_CodeMirror = function(opts){
     this.opts = {
         holder: '',
-        base_path: '/codepad/js/codemirror/'
+        base_path: ''
     };
     $.extend(true, this.opts, opts);
 
