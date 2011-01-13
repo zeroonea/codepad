@@ -13,7 +13,8 @@
 var CodePad = {
 
     opts : {
-        tabs: null,
+        tab_types: null,
+        default_tab_type: null,
         files: null,
         toolbars: ['save,wrap,maximize'],
         load_files_callback: null,
@@ -211,7 +212,8 @@ var CodePad = {
         $('#codepad-holders').append(tab);
         $('#file-tabs > ul').css('display', '');
 
-        this.ctab = new this.opts.tabs.bespin.obj(this.opts.tabs.codemirror.opts);
+        var tab_type = this.opts.tab_types[this.opts.default_tab_type];
+        this.ctab = new tab_type.obj(tab_type.opts);
         this.ctab.Open(file, content, '#' + tabid);
         this.ctab.tabid = '#' + tabid;
         this.tabs[file] = this.ctab;
@@ -304,7 +306,12 @@ var CodePad = {
         }
     },
     
-    Error : function(msg, errcode){
+    Error : function(msg, code){
+        alert(msg);
+        $('#spinner').css('display', 'none');
+    },
+
+    Success : function(msg, code){
         alert(msg);
         $('#spinner').css('display', 'none');
     }

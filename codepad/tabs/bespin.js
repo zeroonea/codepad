@@ -10,7 +10,7 @@ var CodePadTab_Bespin = function(opts){
         this.file = file;
         this.textarea = $('<textarea style="width:100%;height:100%"></textarea>');
         this.textarea.val(content);
-        this.wrap = $('<div class="codepad-wrapper"></div>');
+        this.wrap = $('<div class="codepadtab"></div>');
         this.wrap.append(this.textarea);
         $(holder != null ? holder : this.opts.holder).append(this.wrap);
 

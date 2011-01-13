@@ -1,7 +1,7 @@
 var CodePadTab_CodeMirror = function(opts){
     this.opts = {
         holder: '',
-        base_path: 'js/codemirror/'
+        base_path: '/codepad/js/codemirror/'
     };
     $.extend(true, this.opts, opts);
 
@@ -11,7 +11,7 @@ var CodePadTab_CodeMirror = function(opts){
         this.file = file;
         this.textarea = $('<textarea style="width:100%;height:100%"></textarea>');
         this.textarea.val(content);
-        this.wrap = $('<div class="codepad-wrapper" style="background-color:#fff"></div>');
+        this.wrap = $('<div class="codepadtab" style="background-color:#fff"></div>');
         this.wrap.append(this.textarea);
         $(holder != null ? holder : this.opts.holder).append(this.wrap);
 

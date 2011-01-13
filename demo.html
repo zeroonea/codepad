@@ -28,7 +28,7 @@ function start_codepad(iframe){
     var cp = iframe.contentWindow;
 
     cp.CodePad.Init({
-        tabs:{
+        tab_types: {
             bespin: {
                 obj: cp.CodePadTab_Bespin
             },
@@ -39,6 +39,7 @@ function start_codepad(iframe){
                 }
             }
         },
+        default_tab_type: 'bespin',
         files: files,
         load_file_callback: 'load_file',
         save_file_callback: 'save_file'
@@ -53,6 +54,7 @@ function load_file(file, codepad_obj){
 
 function save_file(file, content, codepad_obj){
     alert(content);
+    codepad_obj.Success('Demo!', 'savefile');
 }
 </script>
 </head>
