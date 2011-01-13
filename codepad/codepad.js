@@ -145,7 +145,7 @@ var CodePad = {
             var ext = child_html != '' ? 'folder' : this.GetFileExtension(name);
             var type = child_html != '' ? 'folder' : 'file';
 
-            html += '<li rel="'+ext+'" data-'+ type +'="'+path+'"><a href="javascript:void(0);">' + name + '</a>' + child_html + '</li>';
+            html += '<li class="'+ext+'" data-'+ type +'="'+path+'"><a href="javascript:void(0);">' + name + '</a>' + child_html + '</li>';
         }
 
         if(html != ''){
@@ -211,7 +211,7 @@ var CodePad = {
         $('#codepad-holders').append(tab);
         $('#file-tabs > ul').css('display', '');
 
-        this.ctab = new this.opts.tabs.codemirror.obj(this.opts.tabs.codemirror.opts);
+        this.ctab = new this.opts.tabs.bespin.obj(this.opts.tabs.codemirror.opts);
         this.ctab.Open(file, content, '#' + tabid);
         this.ctab.tabid = '#' + tabid;
         this.tabs[file] = this.ctab;

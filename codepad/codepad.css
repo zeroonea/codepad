@@ -164,29 +164,29 @@ background-image:url(images/ico16_php.png) !important;
 background-position: 0 0 !important;
 }
 .ico16.js, .ico16.json,
-#file-tree li[rel=js] > a .jstree-icon,
-#file-tree li[rel=json] > a .jstree-icon{
+#file-tree li.js > a .jstree-icon,
+#file-tree li.json > a .jstree-icon{
 background-image:url(images/ico16_js.png) !important;
 background-position: 0 0 !important;
 }
 .ico16.css,
-#file-tree li[rel=css] > a .jstree-icon{
+#file-tree li.css > a .jstree-icon{
 background-image:url(images/ico16_css.png) !important;
 background-position: 0 0 !important;
 }
 .ico16.html, .ico16.htm,
-#file-tree li[rel=html] > a .jstree-icon,
-#file-tree li[rel=htm] > a .jstree-icon{
+#file-tree li.html > a .jstree-icon,
+#file-tree li.htm > a .jstree-icon{
 background-image:url(images/ico16_html.png) !important;
 background-position: 0 0 !important;
 }
 .ico16.xml,
-#file-tree li[rel=xml] > a .jstree-icon{
+#file-tree li.xml > a .jstree-icon{
 background-image:url(images/ico16_xml.png) !important;
 background-position: 0 0 !important;
 }
 .ico16.markdown,
-#file-tree li[rel=markdown] > a .jstree-icon{
+#file-tree li.markdown > a .jstree-icon{
 background-image:url(images/ico16_markdown.png) !important;
 background-position: 0 0 !important;
 }
