@@ -185,3 +185,8 @@ background-position: 0 0 !important;
 background-image:url(images/ico16_xml.png) !important;
 background-position: 0 0 !important;
 }
+.ico16.markdown,
+#file-tree li[rel=markdown] > a .jstree-icon{
+background-image:url(images/ico16_markdown.png) !important;
+background-position: 0 0 !important;
+}
