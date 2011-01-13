@@ -3,26 +3,24 @@
 <title>CodePad</title>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-<link type="text/css" rel="stylesheet" href="../js/jquery/css/default/jquery-ui-1.8.4.custom.css" />
-<script type="text/javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="../js/jquery/jquery-ui-1.8.4.custom.min.js"></script>
-
-<script type="text/javascript" src="../js/jstree/jquery.jstree.js"></script>
-
-<link type="text/css" rel="stylesheet" href="layout.css" />
-<script type="text/javascript" src="../js/jquery-ui-layout/jquery-ui-layout.js"></script>
-
-<link type="text/css" rel="stylesheet" href="codepad.css" />
-
 <link id="bespin_base" href="../js/bespinembedded/" />
 <link type="text/css" rel="stylesheet" href="../js/bespinembedded/BespinEmbedded.css" />
+<link type="text/css" rel="stylesheet" href="../js/jquery/css/default/jquery-ui-1.8.4.custom.css" />
+<link type="text/css" rel="stylesheet" href="layout.css" />
+<link type="text/css" rel="stylesheet" href="codepad.css" />
+
+<script type="text/javascript" src="../js/jquery/jquery-1.4.2.min.js"></script>
+<script type="text/javascript" src="../js/jquery/jquery-ui-1.8.4.custom.min.js"></script>
+<script type="text/javascript" src="../js/jstree/jquery.jstree.js"></script>
+<script type="text/javascript" src="../js/jquery-ui-layout/jquery-ui-layout.js"></script>
+
+<script type="text/javascript" src="tabs/bespin.js"></script>
 <script type="text/javascript" src="../js/bespinembedded/BespinEmbedded.js"></script>
 
+<script type="text/javascript" src="tabs/codemirror.js"></script>
 <script type="text/javascript" src="../js/codemirror/js/codemirror.js"></script>
 
 <script type="text/javascript" src="codepad.js"></script>
-<script type="text/javascript" src="tabs/bespin.js"></script>
-<script type="text/javascript" src="tabs/codemirror.js"></script>
 <script type="text/javascript">
 var cpc = 0;
 $(document).ready(function(){
@@ -38,8 +36,8 @@ $(document).ready(function(){
             _bespin.Open(file, content, holder);
             return _bespin;
         },
-        load_file_callback: 'load_plugin_file',
-        save_file_callback: 'save_plugin_file'
+        load_file_callback: 'load_file',
+        save_file_callback: 'save_file'
     });
 });
 </script>
