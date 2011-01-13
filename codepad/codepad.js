@@ -1,3 +1,15 @@
+/*
+ * CodePad 0.1-rc1
+ *
+ * Copyright (c) 2011 Nguyen Hung Tin (zeroonea.com)
+ *
+ * Dual licensed under the MIT and GPL licenses
+ *   http://www.opensource.org/licenses/mit-license.php
+ *   http://www.gnu.org/licenses/gpl.html
+ *
+ * $Date: 2011-01-11 8:32:54 +0700 $
+ */
+
 var CodePad = {
 
     opts : {
