@@ -88,7 +88,7 @@ var CodePad = {
         /** File Tabs */
         $('#file-tabs').tabs({
             tabTemplate: '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Close</span></li>',
-            select: function(event, ui){
+            show: function(event, ui){
                 if($(ui.tab).parent().data('codepadtab') != null){
                     CodePad.ctab = $(ui.tab).parent().data('codepadtab');
                     CodePad.ctab.Refresh();
