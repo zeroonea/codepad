@@ -87,12 +87,15 @@ var CodePad = {
 
         /** File Tabs */
         $('#file-tabs').tabs({
-            //tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'>Close</span></li>",
-            show: function(event, ui){
-                if($(ui.panel).data('codepadtab') != null){
-                    CodePad.ctab = $(ui.panel).data('codepadtab');
+            tabTemplate: '<li><a href="#{href}">#{label}</a> <span class="ui-icon ui-icon-close">Close</span></li>',
+            select: function(event, ui){
+                if($(ui.tab).parent().data('codepadtab') != null){
+                    CodePad.ctab = $(ui.tab).parent().data('codepadtab');
                     CodePad.ctab.Refresh();
                 }
+            },
+            add: function(event, ui){
+                $(ui.tab).parent().data('codepadtab', CodePad.ctab);
             }
         });
 
@@ -206,23 +209,42 @@ var CodePad = {
         var tabid = 'file-tabs-' + (this.tabcount++);
         var ext = this.GetFileExtension(file);
 
+        /** Create new codepadtab */
+        var tab_type = this.opts.tab_types[this.opts.default_tab_type];
+        this.ctab = new tab_type.obj(tab_type.opts);
+
+        /** Create new jquery-tab */
         var tab = $('<div id="'+tabid+'"></div>');
         $('#codepad-holders').append(tab);
         $('#file-tabs').tabs('add', '#' + tabid, '<span class="ico16 '+ext+'"></span>&nbsp;' + this.GetFileName(file));
         $('#codepad-holders').append(tab);
         $('#file-tabs > ul').css('display', '');
 
-        var tab_type = this.opts.tab_types[this.opts.default_tab_type];
-        this.ctab = new tab_type.obj(tab_type.opts);
+        /** Display codepadtab in jquery-tab */
         this.ctab.Open(file, content, '#' + tabid);
+        this.ctab.file = file;
         this.ctab.tabid = '#' + tabid;
         this.tabs[file] = this.ctab;
 
-        $(tab).data('codepadtab', this.ctab);
         $('#file-tabs').tabs('select', '#' + tabid)
             .find('.ui-tabs-nav').sortable('destroy').sortable({
                 axis: "x"
             });
+
+        /** Close file event */
+        $('#file-tabs span.ui-icon-close').unbind('click').bind('click', function(){
+            CodePad.CloseFile($(this).parent().data('codepadtab').file);
+
+            /** Manual remove jquery-tab */
+            $($(this).parent().data('codepadtab').tabid).remove();
+            $(this).parent().remove();
+
+            /** TMP: Fix strange bug */
+            $('#file-tabs').tabs('add', '', '').tabs('remove', $('#file-tabs').tabs('length') - 1);
+
+            /** Select other tab */
+            $('#file-tabs').tabs('select', $('#file-tabs').tabs('length') - 1);
+        });
 
         $('#spinner').css('display', 'none');
     },
@@ -235,7 +257,13 @@ var CodePad = {
     },
 
     CloseFile : function(file){
-
+        if(this.tabs[file] != null){
+            this.tabs[file].Close();
+            if(this.tabs[file] == this.ctab){
+                this.ctab = null;
+            }
+            this.tabs[file] = null;
+        }
     },
 
     SaveCurrentFile : function(){

@@ -52,6 +52,10 @@ var CodePadTab_CodeMirror = function(opts){
         context.word_wrapping = false;
     };
 
+    this.Close = function(){
+
+    };
+
     this.Value = function(value){
         if(value == null){
             return this.env.getCode();

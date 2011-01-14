@@ -30,6 +30,10 @@ var CodePadTab_Bespin = function(opts){
         );
     };
 
+    this.Close = function(){
+
+    };
+
     this.Value = function(value){
         if(value == null){
             return this.env.editor.value;

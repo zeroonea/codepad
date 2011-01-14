@@ -131,6 +131,8 @@ float:right;
 
 
 /** ICON */
+#file-tabs li .ui-icon-close { float: left; margin: 0.2em 0.2em 0 0; cursor: pointer; }
+
 .ico16 {
 background-position:left top;
 background-repeat:no-repeat;
@@ -159,7 +161,7 @@ background-image:url(images/ico16_maximize.png);
 
 /** File Type Icon */
 .ico16.php,
-#file-tree li[rel=php] > a .jstree-icon{
+#file-tree li.php > a .jstree-icon{
 background-image:url(images/ico16_php.png) !important;
 background-position: 0 0 !important;
 }
