@@ -9,12 +9,11 @@ var CodePadTab_CodeMirror = function(opts){
 
     this.Open = function(file, content, holder){
         this.file = file;
-        this.textarea = $('<textarea style="width:100%;height:100%"></textarea>');
+        this.textarea = $('<textarea style="width:100%;height:100%;"></textarea>');
         this.textarea.val(content);
-        this.wrap = $('<div class="codepadtab" style="background-color:#fff"></div>');
-        this.wrap.append(this.textarea);
+        this.wrap = $('<table style="background-color:#fff;height:100%;width:100%" border="0" cellspacing="0" cellpadding="0"><tr><td height="100%"></td></tr></table>');
+        this.wrap.find('td').append(this.textarea);
         $(holder != null ? holder : this.opts.holder).append(this.wrap);
-
         
         var syntax = (/[.]/.exec(file)) ? /[^.]+$/.exec(file) + '' : '';
         var parserfile = 'parsedummy.js', stylesheet = [];
@@ -41,13 +40,13 @@ var CodePadTab_CodeMirror = function(opts){
 
         context.env = CodeMirror.fromTextArea($(this.textarea).get(0), {
             width: '100%',
-            height: '100%',
             parserfile: parserfile,
             stylesheet: stylesheet,
             path: this.opts.base_path + 'js/',
             continuousScanning: 500,
             tabMode: 'indent',
             textWrapping: false
+            //lineNumbers: true
         });
         context.word_wrapping = false;
     };

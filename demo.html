@@ -1,4 +1,5 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>CodePad</title>
 <script type="text/javascript" src="js/jquery/jquery.min.js"></script>
@@ -37,7 +38,6 @@ function save_file(file, content, codepad_obj){
 
 function start_codepad(iframe){
     var cp = iframe.contentWindow;
-
     cp.CodePad.Init({
         tab_types: {
             bespin: {
@@ -46,11 +46,11 @@ function start_codepad(iframe){
             codemirror: {
                 obj: cp.CodePadTab_CodeMirror,
                 opts: {
-                    base_path: 'js/codemirror/'
+                    base_path: 'http://localhost:81/codepad/js/codemirror/'
                 }
             }
         },
-        default_tab_type: 'codemirror',
+        default_tab_type: 'bespin',
         files: files,
         load_file_callback: 'load_file',
         save_file_callback: 'save_file'

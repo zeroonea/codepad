@@ -10,10 +10,9 @@ var CodePadTab_Bespin = function(opts){
         this.file = file;
         this.textarea = $('<textarea style="width:100%;height:100%"></textarea>');
         this.textarea.val(content);
-        this.wrap = $('<div class="codepadtab"></div>');
-        this.wrap.append(this.textarea);
+        this.wrap = $('<table style="background-color:#fff;height:100%;width:100%" border="0" cellspacing="0" cellpadding="0"><tr><td height="100%"></td></tr></table>');
+        this.wrap.find('td').append(this.textarea);
         $(holder != null ? holder : this.opts.holder).append(this.wrap);
-
         
         var syntax = (/[.]/.exec(file)) ? /[^.]+$/.exec(file) + '' : '';
         if(syntax == 'json') syntax = 'js';

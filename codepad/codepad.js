@@ -100,7 +100,7 @@ var CodePad = {
         });
 
         /** Layout */
-        $('#layout').layout({
+        $(document.body).layout({
             closable: false,
             resizable: false,
             slidable: false,
@@ -214,7 +214,7 @@ var CodePad = {
         this.ctab = new tab_type.obj(tab_type.opts);
 
         /** Create new jquery-tab */
-        var tab = $('<div id="'+tabid+'"></div>');
+        var tab = $('<div id="'+tabid+'" style="height:100%"></div>');
         $('#codepad-holders').append(tab);
         $('#file-tabs').tabs('add', '#' + tabid, '<span class="ico16 '+ext+'"></span>&nbsp;' + this.GetFileName(file));
         $('#codepad-holders').append(tab);
@@ -233,6 +233,8 @@ var CodePad = {
 
         /** Close file event */
         $('#file-tabs span.ui-icon-close').unbind('click').bind('click', function(){
+            
+            /** Remove codepadtab */
             CodePad.CloseFile($(this).parent().data('codepadtab').file);
 
             /** Manual remove jquery-tab */
@@ -240,8 +242,8 @@ var CodePad = {
             $(this).parent().remove();
 
             /** TMP: Fix strange bug */
-            $('#file-tabs').tabs('add', '', '').tabs('remove', $('#file-tabs').tabs('length') - 1);
-
+            $('#file-tabs').tabs('add', 'tmp-123', ' ').tabs('remove', $('#file-tabs').tabs('length') - 1);
+            
             /** Select other tab */
             $('#file-tabs').tabs('select', $('#file-tabs').tabs('length') - 1);
         });
